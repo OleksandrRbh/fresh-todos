@@ -1,61 +1,45 @@
 <template>
   <div class="layout pa-3 justify-center">
     <div class="flex xs8">
-      <div class="elevation-1">
-        <v-simple-table>
-          <template v-slot:default>
-            <thead>
-              <tr>
-                <th class="text-left">Id</th>
-                <th class="text-left">Name</th>
-                <th class="text-left">Description</th>
-                <th class="text-left">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="item in notes" :key="item.id">
-                <td>{{ item.id }}</td>
-                <td>{{ item.name }}</td>
-                <td>{{ item.description }}</td>
-                <td>
-
-                  <v-btn 
-                    icon 
-                    x-large 
-                    color="blue"
-                    @click="goToEditNote(item.id)"
-                  >
-                    <v-icon medium>mdi-pencil</v-icon>
-                  </v-btn>
-
-                  <v-btn 
-                    icon 
-                    x-large 
-                    color="deep-orange"
-                    @click="openDialog(item.id)"
-                  >
-                    <v-icon medium>mdi-delete</v-icon>
-                  </v-btn>
-                </td>
-              </tr>
-              <tr v-if="notes.length === 0">
-                <td colspan="4">
-                  <v-alert 
-                    type="error"
-                    icon="mdi-alert"
-                    dark                
-                    color="red"
-                    border="top"                
-                    tile
-                  >
-                    Sorry, nothing to display here :(
-                  </v-alert>
-                </td>
-              </tr>
-            </tbody>
-          </template>
-        </v-simple-table>
-      </div>
+      <v-data-table
+        :headers="headers"
+        :items="notes"          
+        hide-default-footer
+        class="elevation-1"
+      >          
+        <template v-slot:item.actions="{ item }">
+          <v-btn
+            class="ma-2" 
+            icon 
+            x-large 
+            color="blue"
+            @click="goToEditNote(item.id)"
+          >
+            <v-icon medium>mdi-pencil</v-icon>
+          </v-btn>
+          <v-btn 
+            class="ma-2"
+            icon 
+            x-large 
+            color="deep-orange"
+            @click="openDialog(item.id)"
+          >
+            <v-icon medium>mdi-delete</v-icon>
+          </v-btn>
+        </template>
+        <template v-slot:no-data>
+          <v-alert 
+            type="error"
+            icon="mdi-alert"
+            dark                
+            color="red"
+            border="top"                
+            tile
+          >
+            Sorry, nothing to display here :(
+          </v-alert>
+        </template>
+      </v-data-table>      
       <div class="text-xs-center pt-2">
         <router-link :to="{name: 'notes-new'}">
           <v-btn color="primary">Create new item</v-btn>
@@ -94,7 +78,13 @@ export default {
   data() {
     return {      
       dialog: false,
-      deletedId: null
+      deletedId: null,
+      headers: [
+        { text: 'Id', value: 'id', sortable: false, },
+        { text: 'Name', value: 'name' },
+        { text: 'Description', value: 'description' },
+        { text: 'Actions', value: 'actions', align: 'center', sortable: false, },
+      ]
     }
   },
   computed: {
@@ -121,6 +111,10 @@ export default {
 </script>
 
 <style lang="scss" scoped> 
+  .v-data-table td {
+    padding: 0 24px;
+  }
+
   .v-alert {
     margin-bottom: 0;
     margin: 4px auto;
